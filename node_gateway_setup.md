@@ -7,10 +7,22 @@
 - Computer with Wi-Fi to connect to the Gateway’s dashboard
 
 ## Wiring
-**LoRa Module:**
-Exactly the same pinout as the Sender node (see `node_sender_design.md` table). Use 3.3 V logic only.
+**LoRa Module (same as Sender node):**
+The LoRa module wiring is **exactly the same** as on the Sender node.
 
-No other sensors are required on the Gateway.
+Refer to:
+- The full pin table in `node_sender_design.md`
+- The LoRa photos in `node_sender_setup.md` (or in the `images/` folder)
+
+**Important:** Use **3.3 V only** – **never** connect the LoRa module to 5 V.
+
+**Gateway board overview:**
+![ESP32 Board (Gateway)](images/esp32_board.jpg)
+
+**LoRa module close-up:**
+![LoRa Module](images/lora_module_closeup.jpg)
+
+**No other sensors or hardware** are required on the Gateway node.
 
 ## Software Setup (PlatformIO)
 1. Open the repository in VS Code with the PlatformIO extension.

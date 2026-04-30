@@ -4,7 +4,7 @@
 - Stefan Necsoiu
 - Nojus Lankelis
 
-**Group Name:** IoT Wildfire Tracker Team  
+**Group Name:** GrowTopia
 **Module:** CM3142 Internet of Things  
 **Submission Date:** 30/04/2026
 
@@ -84,6 +84,11 @@ Detailed per-node setup (wiring diagrams, library installation, upload commands)
 [link to demo to be updated]
 
 ## Generative AI Acknowledgement
-I acknowledge use of Grok (xAI) from https://grok.x.ai to assist with structuring documentation and expanding explanations of system design. Prompts used on 30/04/2026 included requests for coursework-compliant Markdown templates and section wording. All generated content was reviewed, edited, and integrated by the team.
+- I acknowledge use of **Grok (xAI)** from https://grok.x.ai to assist with structuring documentation and expanding explanations of system design. Prompts used on 30/04/2026 included requests for coursework-compliant Markdown templates and section wording. All generated content was reviewed, edited, and integrated by the team.
 (Include acknowledgements from chatgpt or other AIs later)
+
+- I acknowledge use of **OpenAI Codex** (via GitHub Copilot) from https://github.com/features/copilot to assist with coding purposes. 
+Codex was used to help generate and suggest C++ code snippets for sensor integration, LoRa packet handling, JSON telemetry formatting, ACK protocol logic, and the AsyncWebServer dashboard implementation on the ESP32. 
+All generated content was reviewed, tested, debugged, and significantly modified by the team before final integration.
+
 ---

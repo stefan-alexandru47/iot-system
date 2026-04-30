@@ -4,7 +4,7 @@ This guide is for someone receiving this system for the first time, with no prio
 
 Use this document as the step-by-step setup process.
 
-Use the wiring maps in [`README.md`](README.md) whenever this guide tells you to connect a module.
+Use the wiring maps in [`README.md`](../README.md) whenever this guide tells you to connect a module.
 
 ## What this system is
 
@@ -55,7 +55,7 @@ Keep a note of which physical board is the sender and which is the gateway.
 
 Both boards need a LoRa module wired the same way.
 
-Open [`README.md`](README.md) and go to:
+Open [`README.md`](../README.md) and go to:
 
 - `LoRa module wiring`
 
@@ -75,7 +75,7 @@ Do this for:
 
 The sender board has the sensors.
 
-Open [`README.md`](README.md) and use these sections one by one:
+Open [`README.md`](../README.md) and use these sections one by one:
 
 1. `GY-BMP280`
 2. `DHT11 temperature/humidity sensor`
@@ -322,4 +322,4 @@ If you want to change sender timing, LoRa payloads, or altitude calibration:
 
 For all pin maps and technical details, always refer back to:
 
-- [`README.md`](README.md)
+- [`README.md`](../README.md)

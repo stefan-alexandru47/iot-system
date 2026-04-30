@@ -1,0 +1,1 @@
+Put the wiring photos etc in here as well and then delete this .md after. 

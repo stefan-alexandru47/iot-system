@@ -1,301 +1,89 @@
-# ESP32 LoRa Wildfire Tracker
+# IoT Wildfire Tracker – Sustainable Cities & Communities
 
-This project uses two ESP32 boards and two LoRa radio modules:
+## Group Members
+- Stefan Necsoiu
+- Nojus Lankelis
 
-- a `Sender` node that reads sensors and transmits telemetry over LoRa
-- a `Gateway` node that receives LoRa packets, joins Wi-Fi, and serves a browser dashboard
+**Group Name:** IoT Wildfire Tracker Team  
+**Module:** CM3142 Internet of Things  
+**Submission Date:** 30/04/2026
 
-The dashboard is designed as a wildfire-tracker demo. It shows live sensor values, trend graphs, packet history, and a derived `Wildfire Conditions` status based on sustained dryness, humidity, temperature, and light conditions.
+## System Description
 
-## Current board roles
+**Selected SDG:** SDG 11 – Sustainable Cities and Communities.
 
-Current development/test mapping:
+Wildfires pose an increasing threat to urban-rural interfaces and sustainable communities worldwide, destroying infrastructure, endangering lives, and disrupting ecosystems. Early detection of high-risk environmental conditions (prolonged dryness, low humidity, elevated temperature, and high light levels) is essential for rapid response and prevention.
 
-| Role | Firmware | Port | Notes |
-|---|---|---|---|
-| Gateway / base ESP32 | `src/gateway.cpp` | `COM9` | Hosts the Wi-Fi dashboard |
-| Sender ESP32 | `src/sender.cpp` | `COM7` | Reads sensors and transmits packets |
+**Aim of the system:**  
+This IoT Wildfire Tracker provides real-time environmental monitoring and early wildfire-risk alerts using low-power, long-range LoRa communication. It enables communities, emergency services, and local authorities to receive live data and visual dashboards, allowing timely intervention before fires escalate.
 
-Current USB note:
+**How the system contributes to SDG 11:**  
+By deploying scalable networks of low-cost sensor nodes, the system supports resilient and sustainable cities through proactive environmental monitoring. It directly addresses the need for innovative infrastructure (SDG 9) that protects communities (SDG 11) from climate-related hazards.
 
-- the sender on `COM7` is the board currently using the `USB-C to USB-A` adapter
+**Required system functionalities:**
+- Collect accurate multi-sensor data (temperature, humidity, soil moisture, pressure, light) at edge nodes.
+- Transmit data reliably over long distances using LoRa.
+- Aggregate data at a gateway and present it via a live web dashboard with trend graphs and a wildfire-risk heuristic.
+- Provide acknowledgements and basic user control (device naming, location, update frequency via code configuration).
+- Scale to hundreds or thousands of nodes across multiple deployments using star/mesh LoRa topology and edge computing.
+- Demonstrate consideration of legal, ethical, and security aspects (data privacy, power efficiency, open-source licensing).
 
-## System overview
+When fully satisfied, these functionalities deliver actionable intelligence that helps communities mitigate wildfire risk and build more sustainable, safer urban environments.
 
-### Sender responsibilities
+## System Design
 
-- reads all attached sensors
-- formats telemetry as compact JSON
-- sends a LoRa packet every `1000 ms`
-- receives gateway messages and replies with `ACK:<id>`
+### Overall System Design
+The system follows a **star topology** with edge computing (sender nodes perform local sensing and basic processing) and a central **gateway/sink node**. This design supports massive scalability: thousands of low-power sender nodes can communicate with multiple gateways that forward aggregated data to cloud services if required in future deployments.
 
-### Gateway responsibilities
+**IoT node types and roles:**
+- **Sender node** (edge node): collects environmental data and transmits via LoRa.
+- **Gateway node** (sink node): receives LoRa packets, stores recent history, serves a web dashboard, and provides acknowledgements.
 
-- receives LoRa packets from the sender
-- replies with acknowledgements
-- stores recent packet history in memory
-- joins a Wi-Fi network as a client
-- serves the dashboard and packet API over HTTP
+**Network topology & computing paradigm:** Edge + gateway (fog) computing. Data processing happens as close to the source as possible to minimise latency and bandwidth usage.
 
-## Repository structure
+**Connectivity protocols:** LoRa (physical layer – 915 MHz, long range, low power) for node-to-gateway communication. This choice is ideal for rural/urban-fringe deployments where Wi-Fi or cellular coverage may be unreliable or expensive.
 
-| Path | Purpose |
-|---|---|
-| `src/sender.cpp` | Sender firmware |
-| `src/gateway.cpp` | Gateway firmware |
-| `platformio.ini` | PlatformIO environments and dependencies |
-| `modules.md` | Short hardware mapping reference |
-| `FIRST_TIME_SETUP.md` | Beginner-friendly first setup guide |
+**Application-layer messaging:** Compact JSON payloads over a simple custom protocol (`MSG:<id>:<payload>` with `ACK:<id>`). JSON ensures future interoperability with cloud services.
 
-## PlatformIO environments
+**User control:** Device name, location, and transmission interval are configurable in source code (easily editable for different deployments). Future versions could add a simple web configuration interface.
 
-The project currently uses these PlatformIO environments:
+**Additional considerations:**
+- **Legal/ethical/privacy:** No personal data is collected. All sensor data is anonymised and publicly viewable on the dashboard. Open-source licensing encourages community contributions.
+- **Security:** Basic ACK protocol prevents packet loss; production systems would add encryption.
+- **Scalability:** LoRa supports thousands of nodes per gateway with appropriate duty-cycle management.
+- **Advanced techniques:** A heuristic wildfire-risk algorithm combines multiple sensor streams (implemented in the gateway).
 
-- `sender`
-- `gateway`
+**Node names for reference:**
+- `node_sender`
+- `node_gateway`
 
-Example upload commands:
+(Full detailed design for each node is in the separate `node_sender_design.md` and `node_gateway_design.md` files.)
 
-```powershell
-$env:PLATFORMIO_CORE_DIR="$PWD\.platformio-core"
-& "$env:APPDATA\Python\Python312\Scripts\pio.exe" run -e sender -t upload --upload-port COM7
-& "$env:APPDATA\Python\Python312\Scripts\pio.exe" run -e gateway -t upload --upload-port COM9
-```
+## Setup Guide
 
-Example build commands:
+### General Instructions
+The system is developed for ESP32 boards using PlatformIO (C++). All code is documented and follows industry best practices.
 
-```powershell
-$env:PLATFORMIO_CORE_DIR="$PWD\.platformio-core"
-& "$env:APPDATA\Python\Python312\Scripts\pio.exe" run -e sender
-& "$env:APPDATA\Python\Python312\Scripts\pio.exe" run -e gateway
-```
+**Prerequisites:**
+- Two ESP32 development boards + LoRa modules (see hardware maps in the node design files).
+- PlatformIO (recommended) or Arduino IDE.
+- Python 3 not required for core operation (ESP32 firmware is C++ – justified in node design files for power and cost reasons).
+- Wi-Fi network for the gateway.
 
-## Radio configuration
+**Cloud/web services:** None used in the current implementation. The gateway hosts its own HTTP dashboard.
 
-Both boards currently use the same LoRa settings:
+**Repository structure:**
+- `node_sender/` – Sender node code
+- `node_gateway/` – Gateway node code
+- `node_sender_design.md` / `node_sender_setup.md`
+- `node_gateway_design.md` / `node_gateway_setup.md`
 
-| Setting | Value |
-|---|---|
-| Frequency | `915E6` |
-| SPI frequency | `8E6` |
-| CRC | enabled |
-| TX power | `17` |
+Detailed per-node setup (wiring diagrams, library installation, upload commands) is provided in the individual `node_<name>_setup.md` files.
 
-The packet protocol is:
+**Video demonstration:**  
+[link to demo to be updated]
 
-- application packet: `MSG:<id>:<payload>`
-- acknowledgement: `ACK:<id>`
-
-## Gateway Wi-Fi configuration
-
-The gateway Wi-Fi settings are currently hardcoded in `src/gateway.cpp`.
-
-Current fields:
-
-- `WIFI_SSID`
-- `WIFI_PASSWORD`
-- `DEVICE_NAME`
-
-Current test IP during development has been:
-
-- `http://192.168.1.217`
-
-Important:
-
-- the IP address may change if the router assigns a different address after reboot
-- the phone viewing the dashboard must be on the same Wi-Fi network as the gateway ESP32
-
-## Hardware maps
-
-### LoRa module wiring
-
-This wiring applies to both the sender and the gateway.
-
-| LoRa pin | ESP32 pin | Function |
-|---|---|---|
-| `3V3` | `3.3V` | Power |
-| `GND` | `GND` | Ground |
-| `MISO` | `GPIO19` | SPI MISO |
-| `MOSI` | `GPIO23` | SPI MOSI |
-| `SCK` | `GPIO18` | SPI clock |
-| `NSS` | `GPIO5` | Chip select |
-| `RST` | `GPIO14` | Reset |
-| `DIO0` | `GPIO2` | LoRa interrupt |
-
-Important:
-
-- use `3.3V`, not `5V`
-
-### Sender sensor map
-
-#### GY-BMP280
-
-This is the pressure/temperature sensor on the sender.
-
-| BMP280 pin | ESP32 pin | Function |
-|---|---|---|
-| `VCC` | `3.3V` | Power |
-| `GND` | `GND` | Ground |
-| `SCL` | `GPIO22` | I2C clock |
-| `SDA` | `GPIO21` | I2C data |
-| `CSB` | `3.3V` | Forces I2C mode |
-| `SDO` | `GND` | Sets I2C address `0x76` |
-
-Firmware notes:
-
-- primary I2C address checked: `0x76`
-- secondary I2C address checked: `0x77`
-- current working board is a `GY-BMP280`, not a `BME280`
-- altitude is software-calibrated with an offset in `src/sender.cpp`
-
-#### DHT11 temperature/humidity sensor
-
-| DHT11 pin | ESP32 pin | Function |
-|---|---|---|
-| `VCC` | `3.3V` or module VCC input | Power |
-| `GND` | `GND` | Ground |
-| `OUT` | `GPIO4` | Digital data |
-
-#### Soil moisture module with LM393
-
-| Soil module pin | ESP32 pin | Function |
-|---|---|---|
-| `VCC` | `3.3V` | Power |
-| `GND` | `GND` | Ground |
-| `DO` | `GPIO25` | Digital threshold output |
-| `AO` | `GPIO34` | Analog moisture output |
-
-Current moisture calibration used by the dashboard:
-
-- raw `3700` = `0/100` moisture
-- raw `1800` = `100/100` moisture
-
-#### Photoresistor
-
-Current wiring assumption:
-
-- one side to `3.3V`
-- analog read point to `GPIO35`
-- `10k ohm` resistor from `GPIO35` to `GND`
-
-| Photoresistor connection | ESP32 pin | Function |
-|---|---|---|
-| Divider output | `GPIO35` | Analog light reading |
-| Pull-down resistor | `GND` | Reference to ground |
-
-Current light calibration used by the dashboard:
-
-- raw `0` = `0/100`
-- raw `3800` = `100/100`
-
-## Sender telemetry format
-
-The sender currently transmits compact JSON to keep LoRa packet size under control.
-
-Example payload:
-
-```json
-{"n":"Sender","s":3244,"u":3253944,"ba":118,"bt":24.68,"bp":1030.95,"bl":7.87,"dok":true,"dt":24.10,"dh":48.00,"sa":4095,"sd":0,"lv":3082}
-```
-
-Field map:
-
-| Key | Meaning |
-|---|---|
-| `n` | Node name |
-| `s` | Sender packet sequence number |
-| `u` | Uptime in milliseconds |
-| `ba` | BMP280 I2C address |
-| `bt` | BMP280 temperature in C |
-| `bp` | Pressure in hPa |
-| `bl` | Altitude in meters |
-| `dok` | DHT11 reading valid flag |
-| `dt` | DHT11 temperature in C |
-| `dh` | DHT11 humidity percent |
-| `sa` | Soil moisture analog raw reading |
-| `sd` | Soil moisture digital state |
-| `lv` | Light raw reading |
-
-## Gateway dashboard behavior
-
-The dashboard in `src/gateway.cpp` currently includes:
-
-- live conditions cards
-- compact packet feed
-- temperature vs humidity graph
-- soil moisture graph
-- light level graph
-- pressure vs altitude graph
-- wildfire likelihood over time graph
-- `Wildfire Conditions` color band:
-  - `Blue`
-  - `Green`
-  - `Yellow`
-  - `Orange`
-  - `Red`
-
-The gateway stores recent history in RAM only.
-
-Current history size:
-
-- `240` recent packets
-
-This history is cleared on boot.
-
-## Wildfire demo logic
-
-The dashboard computes a demo wildfire likelihood score from recent samples.
-
-It currently considers:
-
-- prolonged low soil moisture
-- prolonged low humidity
-- elevated temperature
-- strong daylight as a secondary supporting factor
-
-Important:
-
-- this is a demo heuristic, not a real wildfire prediction model
-- it is useful for showing how environmental conditions can be combined into a warning indicator
-
-## Calibration values currently in use
-
-### Soil moisture
-
-- dry threshold: `3700 -> 0`
-- wet threshold: `1800 -> 100`
-
-### Light level
-
-- dark: `0 -> 0`
-- bright: `3800 -> 100`
-
-### Altitude
-
-In `src/sender.cpp`, altitude is adjusted with:
-
-- `ALTITUDE_CALIBRATION_OFFSET_M = 154.17f`
-
-This was used to make the local displayed altitude approximately correct at the calibration point used during development.
-
-## Current known-good operating state
-
-- sender firmware builds and uploads on `COM7`
-- gateway firmware builds and uploads on `COM9`
-- sender transmits every `1 second`
-- gateway receives sender packets and acknowledges them
-- gateway dashboard serves over Wi-Fi
-- packet history, graphs, and wildfire-condition logic update from live data
-
-## Recommended next maintenance points
-
-- if Wi-Fi credentials change, update `src/gateway.cpp`
-- if the router gives a different IP, find the gateway again on the local network
-- if the altitude drifts from the target demo value, adjust `ALTITUDE_CALIBRATION_OFFSET_M`
-- if soil or light sensors are changed, recalibrate the scaling values in `src/gateway.cpp`
-
-## Additional guide
-
-For a step-by-step first-time installation and setup process, see:
-
-- [`FIRST_TIME_SETUP.md`](FIRST_TIME_SETUP.md)
+## Generative AI Acknowledgement
+I acknowledge use of Grok (xAI) from https://grok.x.ai to assist with structuring documentation and expanding explanations of system design. Prompts used on 30/04/2026 included requests for coursework-compliant Markdown templates and section wording. All generated content was reviewed, edited, and integrated by the team.
+(Include acknowledgements from chatgpt or other AIs later)
+---

@@ -69,4 +69,16 @@ pio run -e gateway -t upload --upload-port COM8   # ← replace COM8 with your G
 
 A third party can now set up and run the complete system using the root `platformio.ini` together with `src/node_gateway/main.cpp` and `src/node_sender/main.cpp`.
 
+## Dashboard Appearance
+
+After the Gateway starts and you open `http://<gateway-ip>` in a browser, you will see:
+
+**Live dashboard overview:**
+![Gateway Dashboard - Live View](images/dashboard_live_1.png)
+
+**Graphs:**
+![Dashboard Graphs and Packet Feed](images/dashboard_live_2.png)
+
+The dashboard updates in real time as new LoRa packets arrive from the Sender node.
+
 ---

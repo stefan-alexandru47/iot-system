@@ -35,6 +35,7 @@ int packetCount = 0;
 unsigned long lastWifiAttemptMs = 0;
 unsigned long sentCounter = 0;
 bool wifiInitialized = false;
+bool loraReady = false;
 unsigned long lastAckedMessageId = 0;
 unsigned long lastAckAtMs = 0;
 unsigned long lastRxCheckLogMs = 0;
@@ -181,7 +182,7 @@ String packetHistoryJson() {
 }
 
 bool sendLoRaMessage(const String &message) {
-  if (message.isEmpty() || message.length() > MAX_LORA_TEXT) {
+  if (!loraReady || message.isEmpty() || message.length() > MAX_LORA_TEXT) {
     return false;
   }
 
@@ -1393,6 +1394,8 @@ void handlePackets() {
   String body = "{";
   body += "\"wifiConnected\":";
   body += WiFi.status() == WL_CONNECTED ? "true" : "false";
+  body += ",\"loraReady\":";
+  body += loraReady ? "true" : "false";
   body += ",\"ip\":\"";
   body += WiFi.status() == WL_CONNECTED ? WiFi.localIP().toString() : "";
   body += "\",\"packetCount\":";
@@ -1438,16 +1441,22 @@ bool setupLoRa() {
   LoRa.setSPIFrequency(LORA_SPI_FREQUENCY);
 
   if (!LoRa.begin(LORA_FREQUENCY)) {
+    loraReady = false;
     return false;
   }
 
   LoRa.enableCrc();
   LoRa.setTxPower(17);
   LoRa.receive();
+  loraReady = true;
   return true;
 }
 
 void readLoRaPackets() {
+  if (!loraReady) {
+    return;
+  }
+
   const int packetSize = LoRa.parsePacket();
   if (packetSize <= 0) {
     const unsigned long now = millis();
@@ -1534,10 +1543,7 @@ void setup() {
   clearPacketHistory();
 
   if (!setupLoRa()) {
-    Serial.println("LoRa init failed. Check frequency and wiring.");
-    while (true) {
-      delay(1000);
-    }
+    Serial.println("LoRa init failed. Gateway will continue without radio. Check frequency and wiring.");
   }
 
   WiFi.persistent(false);
@@ -1546,7 +1552,11 @@ void setup() {
 
   Serial.println("HTTP server started");
   Serial.println("Serial commands: type a line to transmit, or PING for a test packet");
-  Serial.println("LoRa receiver armed");
+  if (loraReady) {
+    Serial.println("LoRa receiver armed");
+  } else {
+    Serial.println("LoRa unavailable");
+  }
 }
 
 void loop() {

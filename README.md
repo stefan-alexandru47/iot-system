@@ -57,6 +57,9 @@ The system follows a **star topology** with edge computing (sender nodes perform
 - `src/node_sender/main.cpp`
 - `src/node_gateway/main.cpp`
 
+**Hardware selection:**
+The ESP32 (Freenove ESP32-WROVER) was selected for both the Sender and Gateway nodes due to its ultra-low power consumption (~150 mA active, <10 µA sleep), low unit cost (~£4–6), and excellent suitability for scalable, battery-powered LoRa deployments. This is significantly better than a Raspberry Pi 5 (high power draw and cost) or Arduino-based solutions for a system that must scale to hundreds or thousands of nodes. Detailed SBC comparison tables and per-node justifications are provided in the individual node design files.
+
 (Full detailed design for each node is in the separate `node_sender_design.md` and `node_gateway_design.md` files.)
 
 ## Setup Guide

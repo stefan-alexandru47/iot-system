@@ -17,8 +17,7 @@ No other sensors are required on the Gateway.
 2. The single `platformio.ini` in the root contains separate environments for `sender` and `gateway`.
 3. Required libraries (installed automatically):
     - LoRa by sandeepmistry
-    - ArduinoJson
-    - ESPAsyncWebServer & AsyncTCP (for the dashboard)
+    - WiFi / WebServer from the ESP32 Arduino framework
 
 ## Build & Upload (Gateway only)
 In PowerShell / Terminal run:
@@ -31,13 +30,14 @@ pio run -e gateway -t upload --upload-port COM8   # ← replace COM8 with your G
 
 1. Power the Gateway board via USB.
 2. Wait approximately 15–20 seconds for Wi-Fi initialisation.
-3. Connect your laptop/phone to the Wi-Fi network named "Wildfire-Gateway" (or the SSID shown in serial monitor).
-4. Open a browser and go to ```http://192.168.4.1``` (or the IP shown in serial output).
+3. The Gateway joins the Wi-Fi network configured in the source code.
+4. Connect your laptop/phone to that same Wi-Fi network.
+5. Open a browser and go to the IP shown in serial output.
 5. The live dashboard will display current sensor readings, trend graphs, and the wildfire-risk status.
 
 #### User control:
 
-- Edit constants in ```node_gateway/gateway.cpp```:
+- Edit constants in `src/node_gateway/main.cpp`:
   - Wi-Fi SSID/password (if using existing network instead of AP mode)
   - Dashboard refresh rate
   - Wildfire heuristic thresholds (if you want to tune them)
@@ -55,6 +55,6 @@ pio run -e gateway -t upload --upload-port COM8   # ← replace COM8 with your G
 - No data appearing → confirm Sender is transmitting and LoRa antennas are attached.
 - High RAM usage warning → the history buffer is intentionally small for this demo (scalable with external storage in future).
 
-A third party can now set up and run the complete system using only the files in node_gateway/ together with the Sender node.
+A third party can now set up and run the complete system using the root `platformio.ini` together with `src/node_gateway/main.cpp` and `src/node_sender/main.cpp`.
 
 ---

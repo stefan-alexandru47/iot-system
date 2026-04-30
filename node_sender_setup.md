@@ -28,7 +28,6 @@ Full wiring photos and diagrams are in the original `modules.md` (kept as refere
     - LoRa by sandeepmistry
     - Adafruit BMP280
     - DHT sensor library
-    - ArduinoJson
 
 ## Build & Upload (Sender only)
 In PowerShell / Terminal run:
@@ -44,7 +43,7 @@ pio run -e sender -t upload --upload-port COM7   # ← replace COM7 with your Se
 3. The node will begin sending a packet every 1 second.
 4. Verify operation: check the Gateway dashboard for incoming data.
 
-**User control:** Edit the following constants in ```node_sender/sender.cpp```:
+**User control:** Edit the following constants in `src/node_sender/main.cpp`:
 
 - Node name
 - Transmission interval

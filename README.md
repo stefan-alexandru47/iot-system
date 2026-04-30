@@ -54,8 +54,8 @@ The system follows a **star topology** with edge computing (sender nodes perform
 - **Advanced techniques:** A heuristic wildfire-risk algorithm combines multiple sensor streams (implemented in the gateway).
 
 **Node names for reference:**
-- `node_sender`
-- `node_gateway`
+- `src/node_sender/main.cpp`
+- `src/node_gateway/main.cpp`
 
 (Full detailed design for each node is in the separate `node_sender_design.md` and `node_gateway_design.md` files.)
 
@@ -73,8 +73,8 @@ The system is developed for ESP32 boards using PlatformIO (C++). All code is doc
 **Cloud/web services:** None used in the current implementation. The gateway hosts its own HTTP dashboard.
 
 **Repository structure:**
-- `node_sender/` – Sender node code
-- `node_gateway/` – Gateway node code
+- `src/node_sender/main.cpp` – Sender node firmware
+- `src/node_gateway/main.cpp` – Gateway node firmware
 - `node_sender_design.md` / `node_sender_setup.md`
 - `node_gateway_design.md` / `node_gateway_setup.md`
 

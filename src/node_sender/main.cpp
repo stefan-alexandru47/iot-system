@@ -6,6 +6,8 @@
 #include <DHT.h>
 
 namespace {
+// The sender samples local sensors, packs the readings into a compact JSON
+// payload, and transmits them over LoRa often enough for a live dashboard.
 constexpr char NODE_NAME[] = "Sender";
 
 constexpr long LORA_FREQUENCY = 915E6;
@@ -151,6 +153,8 @@ bool setupBmp280() {
   delay(100);
   logI2cScan();
 
+  // The BMP280 can appear at either standard I2C address depending on how the
+  // breakout's SDO pin is wired, so probe both before failing startup.
   if (bmp.begin(BMP_ADDR_PRIMARY, BMP280_CHIPID)) {
     bmpAddress = BMP_ADDR_PRIMARY;
   } else if (bmp.begin(BMP_ADDR_SECONDARY, BMP280_CHIPID)) {
@@ -180,6 +184,8 @@ String buildSensorPayload() {
   const int soilDigitalValue = digitalRead(SOIL_DIGITAL_PIN);
   const int photoresistorValue = analogRead(PHOTORESISTOR_PIN);
 
+  // Short JSON keys keep the payload inside LoRa packet limits; the gateway
+  // expands them back into human-readable labels for the dashboard.
   String payload = "{";
   payload += "\"n\":\"";
   payload += NODE_NAME;
@@ -258,6 +264,8 @@ void handleIncomingPackets() {
   unsigned long messageId = 0;
   String appPayload;
   if (extractTaggedId(payload, "MSG:", messageId, appPayload)) {
+    // Either node can originate a tagged application message; the receiver
+    // always answers with an ACK so the sender can detect delivery.
     Serial.print("LoRa RX [");
     Serial.print(packetSize);
     Serial.print(" bytes, RSSI ");

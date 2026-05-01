@@ -4,7 +4,7 @@
 - Stefan Necsoiu
 - Nojus Lankelis
 
-**Group Name:** GrowTopia
+**Group Name:** IoT Wildfire Tracker Team  
 **Module:** CM3142 Internet of Things  
 **Submission Date:** 30/04/2026
 
@@ -54,8 +54,8 @@ The system follows a **star topology** with edge computing (sender nodes perform
 - **Advanced techniques:** A heuristic wildfire-risk algorithm combines multiple sensor streams (implemented in the gateway).
 
 **Node names for reference:**
-- `src/node_sender/main.cpp`
-- `src/node_gateway/main.cpp`
+- `node_sender`
+- `node_gateway`
 
 **Hardware selection:**
 The ESP32 (Freenove ESP32-WROVER) was selected for both the Sender and Gateway nodes due to its ultra-low power consumption (~150 mA active, <10 µA sleep), low unit cost (~£4–6), and excellent suitability for scalable, battery-powered LoRa deployments. This is significantly better than a Raspberry Pi 5 (high power draw and cost) or Arduino-based solutions for a system that must scale to hundreds or thousands of nodes. Detailed SBC comparison tables and per-node justifications are provided in the individual node design files.
@@ -76,8 +76,8 @@ The system is developed for ESP32 boards using PlatformIO (C++). All code is doc
 **Cloud/web services:** None used in the current implementation. The gateway hosts its own HTTP dashboard.
 
 **Repository structure:**
-- `src/node_sender/main.cpp` – Sender node firmware
-- `src/node_gateway/main.cpp` – Gateway node firmware
+- `node_sender/` – Sender node code
+- `node_gateway/` – Gateway node code
 - `node_sender_design.md` / `node_sender_setup.md`
 - `node_gateway_design.md` / `node_gateway_setup.md`
 
@@ -87,11 +87,6 @@ Detailed per-node setup (wiring diagrams, library installation, upload commands)
 [link to demo to be updated]
 
 ## Generative AI Acknowledgement
-- I acknowledge use of **Grok (xAI)** from https://grok.x.ai to assist with structuring documentation and expanding explanations of system design. Prompts used on 30/04/2026 included requests for coursework-compliant Markdown templates and section wording. All generated content was reviewed, edited, and integrated by the team.
+I acknowledge use of Grok (xAI) from https://grok.x.ai to assist with structuring documentation and expanding explanations of system design. Prompts used on 30/04/2026 included requests for coursework-compliant Markdown templates and section wording. All generated content was reviewed, edited, and integrated by the team.
 (Include acknowledgements from chatgpt or other AIs later)
-
-- I acknowledge use of **OpenAI Codex** (via GitHub Copilot) from https://github.com/features/copilot to assist with coding purposes. 
-Codex was used to help generate and suggest C++ code snippets for sensor integration, LoRa packet handling, JSON telemetry formatting, ACK protocol logic, and the AsyncWebServer dashboard implementation on the ESP32. 
-All generated content was reviewed, tested, debugged, and significantly modified by the team before final integration.
-
 ---
